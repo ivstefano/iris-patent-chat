@@ -8,7 +8,6 @@ import Sidebar from "@/components/navigation/sidebar"
 import MobileNavigation from "@/components/navigation/mobile-navigation"
 import { MessageBubble } from "@/app/components/chat/MessageBubble"
 import { ChatInput } from "@/app/components/chat/ChatInput"
-import { SourcesPanel } from "@/app/components/chat/SourcesPanel"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Share, MoreVertical } from "lucide-react"
 import { DocumentReference } from "@/store/conversation-store"
@@ -19,7 +18,6 @@ export default function ChatPage() {
   const isMobile = useMobile()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [showSources, setShowSources] = useState(!isMobile)
 
   const {
     conversations,
@@ -156,22 +154,9 @@ export default function ChatPage() {
     // TODO: Regenerate subsequent messages if needed
   }
 
-  const handleSourceClick = (source: DocumentReference) => {
-    if (source.url) {
-      window.open(source.url, '_blank')
-    }
-  }
 
-  // Get all sources from answer messages
-  const allSources = conversation.messages
-    .filter(m => m.type === 'answer' && m.sources)
-    .flatMap(m => m.sources || [])
-    .reduce((unique, source) => {
-      if (!unique.find(s => s.id === source.id)) {
-        unique.push(source)
-      }
-      return unique
-    }, [] as DocumentReference[])
+  // Get all sources from answer messages (temporarily disabled)
+  const allSources: DocumentReference[] = [] // Removed sources panel for now
 
   const chatContent = (
     <div className="flex flex-col h-full">
@@ -200,16 +185,6 @@ export default function ChatPage() {
         </div>
         
         <div className="flex items-center gap-2">
-          {isMobile && allSources.length > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSources(!showSources)}
-              className="text-gray-600 dark:text-gray-400"
-            >
-              Sources ({allSources.length})
-            </Button>
-          )}
           <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400">
             <Share className="h-4 w-4" />
           </Button>
@@ -250,29 +225,6 @@ export default function ChatPage() {
         {chatContent}
         <MobileNavigation />
         
-        {/* Mobile Sources Modal/Sheet */}
-        {showSources && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
-            <div className="w-full bg-white dark:bg-gray-900 rounded-t-lg max-h-[70vh] flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold">Related Documents</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowSources(false)}
-                >
-                  Close
-                </Button>
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <SourcesPanel
-                  sources={allSources}
-                  onSourceClick={handleSourceClick}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </main>
     )
   }
@@ -282,21 +234,8 @@ export default function ChatPage() {
       <Sidebar />
       
       {/* Chat Area */}
-      <div className="flex-1 flex">
-        <div className={`flex-1 ${allSources.length > 0 ? 'mr-80' : ''}`}>
-          {chatContent}
-        </div>
-        
-        {/* Sources Sidebar */}
-        {allSources.length > 0 && (
-          <div className="w-80 flex-shrink-0">
-            <SourcesPanel
-              sources={allSources}
-              onSourceClick={handleSourceClick}
-              className="h-full"
-            />
-          </div>
-        )}
+      <div className="flex-1">
+        {chatContent}
       </div>
     </main>
   )

@@ -150,34 +150,6 @@ export function MessageBubble({ message, onEdit, onStartEdit, onCancelEdit }: Me
           )}
         </div>
 
-        {/* Sources for answers */}
-        {isAnswer && message.sources && message.sources.length > 0 && !message.isLoading && (
-          <div className="mt-2 mr-8">
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-              Sources ({message.sources.length})
-            </div>
-            <div className="space-y-1">
-              {message.sources.slice(0, 3).map((source) => (
-                <div
-                  key={source.id}
-                  className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/50 rounded px-2 py-1"
-                >
-                  <div className={`w-2 h-2 rounded-full ${
-                    source.similarity >= 85 ? 'bg-green-500' :
-                    source.similarity >= 70 ? 'bg-yellow-500' : 'bg-red-500'
-                  }`} />
-                  <span className="truncate flex-1">{source.title}</span>
-                  <span className="font-mono">{source.similarity}%</span>
-                </div>
-              ))}
-              {message.sources.length > 3 && (
-                <div className="text-xs text-gray-500 dark:text-gray-400 px-2">
-                  +{message.sources.length - 3} more sources
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
