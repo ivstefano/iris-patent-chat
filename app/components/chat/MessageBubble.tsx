@@ -57,7 +57,7 @@ export function MessageBubble({ message, onEdit, onStartEdit, onCancelEdit }: Me
   const isAnswer = message.type === 'answer'
 
   return (
-    <div className={`flex w-full mb-4 ${isQuestion ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex w-full mb-4 group ${isQuestion ? 'justify-end' : 'justify-start'}`}>
       <div className={`max-w-[80%] ${isQuestion ? 'order-2' : 'order-1'}`}>
         {/* Avatar and Header */}
         <div className={`flex items-center gap-2 mb-1 ${isQuestion ? 'justify-end' : 'justify-start'}`}>

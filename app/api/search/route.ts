@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server"
+import { collections } from "@/data/collections"
 
 interface SearchResult {
   title: string
   url: string
   content: string
-  source: "JIRA" | "CONFLUENCE"
+  source: "JIRA" | "CONFLUENCE" | "DOCUMENT"
+  filename?: string
+  collection?: string
 }
 
 interface SummaryResponse {
@@ -12,73 +15,77 @@ interface SummaryResponse {
   searchResults: SearchResult[]
 }
 
-type SourceInput = "all" | "jira" | "confluence"
+type SourceInput = "all" | "jira" | "confluence" | "documents"
 
-function toBackendSources(source: SourceInput): Array<"JIRA" | "CONFLUENCE"> {
+function toBackendSources(source: SourceInput): Array<"JIRA" | "CONFLUENCE" | "DOCUMENT"> {
   switch (source) {
     case "jira":
       return ["JIRA"]
     case "confluence":
       return ["CONFLUENCE"]
+    case "documents":
+      return ["DOCUMENT"]
     case "all":
     default:
-      return ["JIRA", "CONFLUENCE"]
+      return ["DOCUMENT"] // Default to documents since that's what we have
   }
 }
 
-function buildMockResponse(question: string, sources: Array<"JIRA" | "CONFLUENCE">): SummaryResponse {
+function buildMockResponse(question: string, sources: Array<"JIRA" | "CONFLUENCE" | "DOCUMENT">, collection?: string): SummaryResponse {
   const s = question?.trim() || "your query"
+  
+  // Generate AI-like response about steel/metal patents
   const summary = [
-    `Here is a quick synthesized overview for “${s}”.`,
+    `Based on the available patent documents, here's what I found regarding "${s}":`,
     "",
-    "Key takeaways:",
-    "- Growth is driven by digital onboarding, embedded finance, and alternative credit assessment models.",
-    "- Margins are compressing due to increased competition and interchange pressure; product bundling and B2B services are common responses.",
-    "- Regulation is tightening (KYC/AML, data residency, DSA/DFS equivalents), with regional variance that impacts product rollout timelines.",
-    "- AI is being adopted to improve underwriting, fraud detection, and service automation; measurable wins include lower review times and higher fraud catch rates.",
+    "Key findings:",
+    "- Multiple patents focus on high-strength electrical steel with improved magnetic properties and reduced core loss.",
+    "- Advanced manufacturing techniques include controlled rolling, annealing processes, and optimized chemical compositions.",
+    "- Significant improvements in strength (>580 MPa tensile), magnetic permeability (>5000), and reduced iron loss (<5 W/kg).",
+    "- Applications span automotive, electrical motors, transformers, and high-speed rotor systems.",
   ].join("\n")
 
-  const searchResults: SearchResult[] = [
-    {
-      title: "Fintech Market Trends 2024: Consolidation and Embedded Finance",
-      url: "https://confluence.iris.co/display/PM/Fintech+Market+Trends+2024",
-      content:
-        "Summary of 2024 trends including embedded finance, SMB credit innovation, and regulatory headwinds; includes adoption metrics and regional notes.",
-      source: "CONFLUENCE",
-    },
-    {
-      title: "Payments Platform: Cross-Border Volumes and Cost Drivers",
-      url: "https://confluence.iris.co/display/ENG/Payments+Platform+Strategy",
-      content:
-        "Engineering notes on cross‑border flows, cost levers (FX spreads, scheme fees), and roadmap items for settlement optimization.",
-      source: "CONFLUENCE",
-    },
-    {
-      title: "TIDE-421: Market intelligence integration for product planning",
-      url: "https://jira.iris.co/browse/TIDE-421",
-      content:
-        "Incorporates third‑party market signals for planning; includes dashboards tracking sector growth and competitive launches.",
-      source: "JIRA",
-    },
-  ].filter((r) => sources.includes(r.source))
+  // Get relevant documents from collections
+  let relevantDocs: SearchResult[] = []
+  
+  // Find the collection or use all if no specific collection
+  const targetCollection = collection ? collections.find(c => c.name === collection) : null
+  const docsToSearch = targetCollection ? [targetCollection] : collections
 
-  // If user filters down to a single source, ensure at least one item
-  if (searchResults.length === 0) {
-    const fallback: SearchResult =
-      sources[0] === "JIRA"
-        ? {
-            title: "TIDE-999: Strategy synthesis for market trends",
-            url: "https://jira.iris.co/browse/TIDE-999",
-            content: "Internal summary ticket consolidating market trend research for quarterly planning.",
-            source: "JIRA",
-          }
-        : {
-            title: "Fintech Trends Overview (Internal)",
-            url: "https://confluence.iris.co/display/STRAT/Fintech+Trends+Overview",
-            content: "Confluence page summarizing quarterly external reports and their impact on roadmap.",
-            source: "CONFLUENCE",
-          }
-    searchResults.push(fallback)
+  docsToSearch.forEach(coll => {
+    // Select 3-5 random documents from the collection
+    const selectedDocs = coll.documents
+      .sort(() => Math.random() - 0.5) // Shuffle
+      .slice(0, Math.floor(Math.random() * 3) + 3) // Pick 3-5 docs
+    
+    selectedDocs.forEach(doc => {
+      relevantDocs.push({
+        title: doc.title,
+        url: `/pdfs/${doc.filename}`,
+        content: doc.description,
+        source: "DOCUMENT",
+        filename: doc.filename,
+        collection: coll.name,
+      })
+    })
+  })
+
+  // Limit to 6 total results and sort by relevance (simulated)
+  const searchResults = relevantDocs
+    .slice(0, 6)
+    .filter((r) => sources.includes(r.source as any))
+
+  // If no documents match, provide at least one fallback
+  if (searchResults.length === 0 && sources.includes("DOCUMENT")) {
+    const fallback = collections[0].documents[0]
+    searchResults.push({
+      title: fallback.title,
+      url: `/pdfs/${fallback.filename}`,
+      content: fallback.description,
+      source: "DOCUMENT",
+      filename: fallback.filename,
+      collection: collections[0].name,
+    })
   }
 
   return { summary, searchResults }
@@ -99,11 +106,11 @@ export async function POST(request: Request) {
     }
 
     const backendSources = toBackendSources(source as SourceInput)
-    const base = process.env.TIDE_BACKEND_URL
+    const base = process.env.IRIS_BACKEND_URL
 
     // If no backend configured, return a mock so the UI works in preview/dev.
     if (!base) {
-      return NextResponse.json(buildMockResponse(query, backendSources), {
+      return NextResponse.json(buildMockResponse(query, backendSources, collection), {
         status: 200,
         headers: { "cache-control": "no-store" },
       })
@@ -208,11 +215,11 @@ export async function POST(request: Request) {
     }
 
     // 4) Final fallback: mock response (keeps the UI functional in preview)
-    const mock = buildMockResponse(query, backendSources)
+    const mock = buildMockResponse(query, backendSources, collection)
     return NextResponse.json(mock, { status: 200, headers: { "cache-control": "no-store" } })
   } catch (error) {
-    // As a last resort, return a minimal mock so the page doesn’t break.
-    const safeMock = buildMockResponse("your query", ["JIRA", "CONFLUENCE"])
+    // As a last resort, return a minimal mock so the page doesn't break.
+    const safeMock = buildMockResponse("your query", ["DOCUMENT"])
     return NextResponse.json(safeMock, { status: 200, headers: { "cache-control": "no-store" } })
   }
 }

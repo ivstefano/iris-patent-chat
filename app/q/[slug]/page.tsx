@@ -126,9 +126,9 @@ export default function ChatPage() {
           sources: data.searchResults?.map((result: any, index: number) => ({
             id: `source-${index}`,
             title: result.title,
-            filename: result.url?.split('/').pop() || `document-${index}`,
+            filename: result.filename || result.url?.split('/').pop() || `document-${index}`,
             similarity: Math.floor(Math.random() * 35) + 60, // Mock similarity 60-95%
-            collection: conversation.collection || 'General',
+            collection: result.collection || conversation.collection || 'General',
             url: result.url,
           })) || [],
         })
