@@ -11,6 +11,7 @@ import {saveQuery} from "@/utils/query-storage";
 import {PillButton} from "./pill-button";
 import {useToast} from "@/hooks/use-toast";
 import {collections} from "@/data/collections";
+import {useConversationStore} from "@/store/conversation-store";
 
 interface SearchInputProps {
   query: string;
@@ -59,6 +60,7 @@ export default function SearchInput({
   const localInputRef = useRef<HTMLTextAreaElement>(null);
   const actualInputRef = inputRef || localInputRef;
   const { toast } = useToast();
+  const { createConversation } = useConversationStore();
 
   const adjustTextareaHeight = (textarea: HTMLTextAreaElement) => {
     if (!textarea) return;
@@ -85,9 +87,15 @@ export default function SearchInput({
     onSearch(e);
 
     if (window.location.pathname === "/") {
-      const fullSlug = createSlug(query);
-      saveQuery(query, fullSlug);
-      router.push(`/q/${fullSlug}${selectedCollection ? `?collection=${selectedCollection}` : ""}`);
+      // Create new conversation
+      const collectionName = currentCollection?.name;
+      const conversationId = createConversation(query.trim(), collectionName);
+      
+      // Save query for history
+      saveQuery(query, conversationId);
+      
+      // Navigate to chat page
+      router.push(`/q/${conversationId}`);
     }
   };
 
