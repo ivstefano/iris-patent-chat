@@ -43,12 +43,34 @@ export function MessageBubble({message, onOpenPDF}: MessageBubbleProps) {
   const isAnswer = message.type === 'answer'
   const isLoading = message.isLoading === true
 
-  // Helper function to get similarity badge color
-  const getSimilarityBadgeColor = (similarity: number) => {
-    if (similarity >= 70) return 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700'
-    if (similarity >= 50) return 'bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700'
-    if (similarity >= 30) return 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700'
-    return 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600'
+  // Helper function to get similarity badge styles
+  const getSimilarityBadgeStyles = (similarity: number) => {
+    if (similarity >= 70) {
+      return {
+        backgroundColor: 'rgb(220 252 231)', // green-100
+        color: 'rgb(22 163 74)', // green-600
+        borderColor: 'rgb(134 239 172)', // green-300
+      }
+    }
+    if (similarity >= 50) {
+      return {
+        backgroundColor: 'rgb(219 234 254)', // blue-100
+        color: 'rgb(37 99 235)', // blue-600
+        borderColor: 'rgb(147 197 253)', // blue-300
+      }
+    }
+    if (similarity >= 30) {
+      return {
+        backgroundColor: 'rgb(254 249 195)', // yellow-100
+        color: 'rgb(202 138 4)', // yellow-600
+        borderColor: 'rgb(253 224 71)', // yellow-300
+      }
+    }
+    return {
+      backgroundColor: 'rgb(243 244 246)', // gray-100
+      color: 'rgb(75 85 99)', // gray-600
+      borderColor: 'rgb(209 213 219)', // gray-300
+    }
   }
 
   const [showAllSources, setShowAllSources] = useState(false)
@@ -89,14 +111,11 @@ export function MessageBubble({message, onOpenPDF}: MessageBubbleProps) {
           }`}
         >
           <div className="whitespace-pre-wrap break-words">
-            {isLoading ? (
+            {isLoading || true ? (
               <div className="flex items-center gap-2">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse"></div>
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-                </div>
-                <span className="text-gray-500 dark:text-gray-400 text-sm">{message.content || 'Thinking...'}</span>
+                <span className="text-gray-500 dark:text-gray-400 text-sm">
+                  {message.content || 'Thinking...'}
+                </span>
               </div>
             ) : (
               message.content
@@ -113,7 +132,10 @@ export function MessageBubble({message, onOpenPDF}: MessageBubbleProps) {
                 {visibleSources.map((source, index) => (
                   <div key={source.id || index} className="flex items-start gap-2">
                     {/* Similarity Badge */}
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${getSimilarityBadgeColor(source.similarity)}`}>
+                    <span 
+                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border"
+                      style={getSimilarityBadgeStyles(source.similarity)}
+                    >
                       {Math.round(source.similarity)}%
                     </span>
                     
