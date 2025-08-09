@@ -6,18 +6,19 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "IRIS.ai - Internal Knowledge Search",
+  title: "IRIS.ai | Patents Chat",
   description: "Search internal knowledge base with AI",
   icons: {
-    icon: "/logo.svg",
+    icon: "/favicon.ico",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
-    generator: 'v0.dev'
+  generator: 'v0.dev'
+}
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({
@@ -28,7 +29,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="h-full" data-app="iris-ai">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </head>
       <body className={`${inter.className} touch-manipulation`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={true} disableTransitionOnChange>
