@@ -122,7 +122,7 @@ export async function POST(request: Request) {
     backendSources.forEach((s) => url.searchParams.append("sources", s))
     if (collection) url.searchParams.append("collection", String(collection))
 
-    let parsed: any | null = null
+    let parsed: any | null
     let response: Response | null = null
     let raw: string | null = null
 
