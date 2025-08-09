@@ -9,7 +9,7 @@ import MobileNavigation from "@/components/navigation/mobile-navigation"
 import { MessageBubble } from "@/app/components/chat/MessageBubble"
 import { ChatInput } from "@/app/components/chat/ChatInput"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Share, MoreVertical } from "lucide-react"
+import { ArrowLeft} from "lucide-react"
 import { DocumentReference } from "@/store/conversation-store"
 
 export default function ChatPage() {
@@ -148,12 +148,8 @@ export default function ChatPage() {
 
   const handleEditMessage = (messageId: string, newContent: string) => {
     updateMessage(conversationId, messageId, { content: newContent })
-    // TODO: Regenerate subsequent messages if needed
   }
 
-
-  // Get all sources from answer messages (temporarily disabled)
-  const allSources: DocumentReference[] = [] // Removed sources panel for now
 
   const chatContent = (
     <div className="flex flex-col h-full">

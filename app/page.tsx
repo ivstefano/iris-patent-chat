@@ -8,8 +8,11 @@ import { User } from 'lucide-react'
 import IrisLogo from "@/components/logo"
 import SearchInput from "@/app/components/search-input"
 import SearchSuggestions from "@/app/components/search-suggestions"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { searchSuggestions } from "@/data/search-suggestions"
+import { useConversationStore } from "@/store/conversation-store"
+import { collections } from "@/data/collections"
+import { saveQuery } from "@/utils/query-storage"
 
 export default function Home() {
 const isMobile = useMobile()
@@ -23,6 +26,8 @@ const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
 const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([])
 const [selectedCollection, setSelectedCollection] = useState<string | undefined>(undefined)
 const searchParams = useSearchParams()
+const router = useRouter()
+const { createConversation } = useConversationStore()
 
 useEffect(() => {
   setMounted(true)
@@ -86,13 +91,18 @@ useEffect(() => {
 }, [query])
 
 const handleSuggestionClick = (suggestion: string) => {
-  const slug = suggestion
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .slice(0, 50)
-  const uniqueId = Math.random().toString(36).substring(2, 8)
-  const fullSlug = `${slug}-${uniqueId}`
+  // Find the selected collection name
+  const currentCollection = collections.find((c) => c.id === selectedCollection)
+  const collectionName = currentCollection?.name
+  
+  // Create new conversation
+  const conversationId = createConversation(suggestion.trim(), collectionName)
+  
+  // Save query for history
+  saveQuery(suggestion, conversationId)
+  
+  // Navigate to chat page
+  router.push(`/q/${conversationId}`)
 }
 
 const getGreeting = () => {

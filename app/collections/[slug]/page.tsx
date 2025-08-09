@@ -1,13 +1,13 @@
 "use client"
 
-import { useMemo, useState, useEffect, useCallback } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { collections } from "@/data/collections"
+import {useCallback, useEffect, useMemo, useState} from "react"
+import {useParams, useRouter} from "next/navigation"
+import {collections} from "@/data/collections"
 import Sidebar from "@/components/navigation/sidebar"
 import MobileNavigation from "@/components/navigation/mobile-navigation"
-import { useMobile } from "@/hooks/use-mobile"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, FileText, MessageSquareText, ExternalLink, Download } from 'lucide-react'
+import {useMobile} from "@/hooks/use-mobile"
+import {Button} from "@/components/ui/button"
+import {ArrowLeft, Download, ExternalLink, FileText, MessageSquareText} from 'lucide-react'
 
 interface DocumentContentProps {
   file: string
@@ -40,8 +40,7 @@ function DocumentContent({ file }: DocumentContentProps) {
   const goToPage = useCallback((page: number) => {
     const objectElement = document.querySelector(`object[data*="${file}"]`) as HTMLObjectElement
     if (objectElement) {
-      const newSrc = `${source}#page=${page}&toolbar=1&navpanes=0`
-      objectElement.data = newSrc
+      objectElement.data = `${source}#page=${page}&toolbar=1&navpanes=0`
       saveCurrentPage(page)
     }
   }, [file, source, saveCurrentPage])

@@ -7,13 +7,11 @@ import { MessageSquareText, DatabaseIcon } from 'lucide-react'
 
 import Logo from "@/components/logo"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function Sidebar() {
 const router = useRouter()
 const pathname = usePathname()
-const { toast } = useToast()
 const [mounted, setMounted] = useState(false)
 
 useEffect(() => {
