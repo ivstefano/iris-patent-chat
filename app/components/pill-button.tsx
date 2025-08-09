@@ -10,7 +10,7 @@ interface PillButtonProps extends React.ComponentProps<typeof ReflectiveButton> 
 export const PillButton = React.forwardRef<
   React.ElementRef<typeof ReflectiveButton>,
   PillButtonProps
->(({ children, icon: Icon, className, ...props }, ref) => {
+>(({ children, icon: Icon, className, ...props }) => {
   return (
     <ReflectiveButton
       variant="outline"
