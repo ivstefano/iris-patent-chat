@@ -3,12 +3,10 @@
 import type React from "react";
 import {useEffect, useRef, useState} from "react";
 import {Button} from "@/components/ui/button";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 
-import {Check, ChevronDown, Folder, FoldersIcon, Send} from 'lucide-react';
+import {Send} from 'lucide-react';
 import {useRouter} from "next/navigation";
 import {saveQuery} from "@/utils/query-storage";
-import {PillButton} from "./pill-button";
 import {useToast} from "@/hooks/use-toast";
 import {collections} from "@/data/collections";
 import {useConversationStore} from "@/store/conversation-store";
@@ -34,12 +32,6 @@ interface SearchInputProps {
   setSelectedCollection?: (id?: string) => void;
 }
 
-const createSlug = (text: string): string => {
-  const slug = text.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-").slice(0, 50);
-  const uniqueId = Math.random().toString(36).substring(2, 8).toString();
-  return `${slug}-${uniqueId}`;
-};
-
 export default function SearchInput({
   query,
   setQuery,
@@ -53,13 +45,10 @@ export default function SearchInput({
   setSelectedSuggestionIndex,
   onSuggestionSelect,
   selectedCollection,
-  setSelectedCollection,
 }: SearchInputProps) {
-  const [collectionDropdownOpen, setCollectionDropdownOpen] = useState(false);
   const router = useRouter();
   const localInputRef = useRef<HTMLTextAreaElement>(null);
   const actualInputRef = inputRef || localInputRef;
-  const { toast } = useToast();
   const { createConversation } = useConversationStore();
 
   const adjustTextareaHeight = (textarea: HTMLTextAreaElement) => {

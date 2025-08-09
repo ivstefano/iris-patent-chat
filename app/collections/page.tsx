@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { collections } from "@/data/collections"
 import { Button } from "@/components/ui/button"
-import { BookOpen, MessageSquareText, Plus, FolderOpen, Cloud, Trash2, X } from 'lucide-react'
+import { BookOpen, MessageSquareText, Plus, Trash2, X } from 'lucide-react'
 import { useState, useRef, useEffect } from "react"
 import Sidebar from "@/components/navigation/sidebar"
 import MobileNavigation from "@/components/navigation/mobile-navigation"
