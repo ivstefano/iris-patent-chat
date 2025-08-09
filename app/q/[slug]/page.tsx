@@ -20,8 +20,6 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   const {
-    conversations,
-    currentConversationId,
     getConversation,
     addMessage,
     updateMessage,
@@ -86,7 +84,6 @@ export default function ChatPage() {
     }
 
     // Add loading message for AI response
-    const loadingMessageId = `loading-${Date.now()}`
     addMessage(conversationId, {
       type: 'answer',
       content: '',
@@ -182,15 +179,6 @@ export default function ChatPage() {
               </p>
             )}
           </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400">
-            <Share className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400">
-            <MoreVertical className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
