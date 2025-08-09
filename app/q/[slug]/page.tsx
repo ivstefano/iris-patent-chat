@@ -8,14 +8,17 @@ import Sidebar from "@/components/navigation/sidebar"
 import MobileNavigation from "@/components/navigation/mobile-navigation"
 import { MessageBubble } from "@/app/components/chat/MessageBubble"
 import { ChatInput } from "@/app/components/chat/ChatInput"
+import { PDFViewer } from "@/app/components/pdf/PDFViewer"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft} from "lucide-react"
+import { usePDFViewer } from "@/hooks/usePDFViewer"
 
 export default function ChatPage() {
   const { slug } = useParams<{ slug: string }>()
   const router = useRouter()
   const isMobile = useMobile()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { selectedPDF, openPDF, closePDF, isOpen: isPDFOpen } = usePDFViewer()
   const [isLoading, setIsLoading] = useState(false)
 
   const {
@@ -184,6 +187,7 @@ export default function ChatPage() {
               <MessageBubble
                 key={message.id}
                 message={message}
+                onOpenPDF={openPDF}
               />
             ))}
         </div>
@@ -214,9 +218,21 @@ export default function ChatPage() {
       <Sidebar />
       
       {/* Chat Area */}
-      <div className="flex-1">
+      <div className={`${isPDFOpen ? 'w-1/2' : 'flex-1'} transition-all duration-300`}>
         {chatContent}
       </div>
+
+      {/* PDF Viewer */}
+      {isPDFOpen && selectedPDF && (
+        <PDFViewer
+          isOpen={true}
+          onClose={closePDF}
+          pdfUrl={selectedPDF.url}
+          documentTitle={selectedPDF.title}
+          initialPage={selectedPDF.page}
+          searchText={selectedPDF.searchText}
+        />
+      )}
     </main>
   )
 }

@@ -3,20 +3,40 @@
 import React, { useState } from "react"
 import {User, Bot, FileText, ExternalLink, ChevronDown, ChevronUp} from "lucide-react"
 import {ConversationMessage} from "@/store/conversation-store"
-import { PDFViewer } from "../pdf/PDFViewer"
 
 interface MessageBubbleProps {
   message: ConversationMessage
+  onOpenPDF?: (pdf: {url: string, title: string, page?: number, searchText?: string}) => void
 }
 
-export function MessageBubble({message}: MessageBubbleProps) {
+export function MessageBubble({message, onOpenPDF}: MessageBubbleProps) {
 
-  const formatTime = (timestamp: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }).format(timestamp)
+  const formatTime = (timestamp: Date | string | number) => {
+    // Convert to Date if it's not already
+    let date: Date
+    if (timestamp instanceof Date) {
+      date = timestamp
+    } else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+      date = new Date(timestamp)
+    } else {
+      return '--:--'
+    }
+    
+    // Handle invalid dates
+    if (!date || isNaN(date.getTime())) {
+      return '--:--'
+    }
+    
+    try {
+      return new Intl.DateTimeFormat('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }).format(date)
+    } catch (error) {
+      console.warn('Error formatting timestamp:', error)
+      return '--:--'
+    }
   }
 
   const isQuestion = message.type === 'question'
@@ -31,7 +51,6 @@ export function MessageBubble({message}: MessageBubbleProps) {
   }
 
   const [showAllSources, setShowAllSources] = useState(false)
-  const [selectedPDF, setSelectedPDF] = useState<{url: string, title: string, page?: number, searchText?: string} | null>(null)
 
   // Sort sources by similarity (highest first)
   const sortedSources = message.sources ? [...message.sources].sort((a, b) => b.similarity - a.similarity) : []
@@ -90,7 +109,7 @@ export function MessageBubble({message}: MessageBubbleProps) {
                     <div className="flex-1 min-w-0">
                       {source.url ? (
                         <button
-                          onClick={() => setSelectedPDF({
+                          onClick={() => onOpenPDF?.({
                             url: source.url!,
                             title: source.title,
                             page: source.page,

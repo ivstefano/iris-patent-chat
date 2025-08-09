@@ -69,7 +69,7 @@ export function ChatInput({ onSendMessage, disabled = false, placeholder = "Ask 
   return (
     <div className={`border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 ${className}`}>
       <form onSubmit={handleSubmit} className="p-4">
-        <div className="relative flex items-end gap-3">
+        <div className="relative flex gap-3">
           <div className="flex-1 relative">
             <textarea
               ref={textareaRef}
