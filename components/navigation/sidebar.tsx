@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { MessageCircleQuestionIcon, DatabaseIcon } from 'lucide-react'
+import { MessageSquareText, DatabaseIcon } from 'lucide-react'
 
 import Logo from "@/components/logo"
 import { Button } from "@/components/ui/button"
@@ -57,8 +57,8 @@ return (
           className="w-full justify-between px-3 py-2 bg-gray-50 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-full text-gray-900 dark:text-white"
           variant="outline"
         >
-          <span>Ask New Question</span>
-          <span className="text-xs text-muted-foreground">{getOSKeyboardShortcut()}</span>
+          <span>New Chat</span>
+          <span className="text-xs text-muted-foreground">{mounted ? getOSKeyboardShortcut() : "⌘ K"}</span>
         </Button>
       </div>
     </div>
@@ -71,8 +71,8 @@ return (
           isActive("/") ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-400"
         }`}
       >
-        <MessageCircleQuestionIcon size={18} />
-        <span>Ask Questions</span>
+        <MessageSquareText size={18} />
+        <span>Chat</span>
       </Link>
       <Link
         href="/collections"

@@ -7,7 +7,7 @@ import Sidebar from "@/components/navigation/sidebar"
 import MobileNavigation from "@/components/navigation/mobile-navigation"
 import { useMobile } from "@/hooks/use-mobile"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, FileText, Sparkles, ExternalLink, Download } from 'lucide-react'
+import { ArrowLeft, FileText, MessageSquareText, ExternalLink, Download } from 'lucide-react'
 
 interface DocumentContentProps {
   file: string
@@ -200,7 +200,7 @@ export default function CollectionDetailPage() {
 
   const content = (
     <div className="flex-1 p-6 overflow-hidden">
-      <div className="max-w-6xl mx-auto h-full flex flex-col">
+      <div className="mx-auto h-full flex flex-col">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" onClick={() => router.back()}>
@@ -214,8 +214,8 @@ export default function CollectionDetailPage() {
           </div>
           <div className="flex gap-2">
             <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => router.push(`/?collection=${collection.id}`)}>
-              <Sparkles className="w-4 h-4 mr-2" />
-              Ask about this collection
+              <MessageSquareText className="w-4 h-4 mr-2" />
+              Ask about this set
             </Button>
           </div>
         </div>
@@ -223,11 +223,11 @@ export default function CollectionDetailPage() {
         <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: list of documents */}
           <div className="lg:col-span-1 h-full overflow-y-auto bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl p-4">
-            <div className="space-y-3">
+            <div className="space-y-3 cursor-pointer">
               {collection.documents.map((doc, idx) => (
                 <div
                   key={doc.filename + idx}
-                  className={`p-3 rounded-lg border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-100 dark:hover:bg-[#252525] transition-colors cursor-pointer ${
+                  className={`p-3 rounded-lg border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-100 dark:hover:bg-[#252525] transition-colors ${
                     selectedDocument === doc.filename ? "bg-gray-100 dark:bg-[#252525]" : ""
                   }`}
                   onClick={() => handleDocumentClick(doc.filename)}

@@ -62,8 +62,15 @@ useEffect(() => {
 useEffect(() => {
   const q = searchParams.get("q")
   const col = searchParams.get("collection")
+  const autofocus = searchParams.get("autofocus")
+  
   if (q) setQuery(q)
   if (col) setSelectedCollection(col)
+  
+  // Auto-focus input when coming from "Ask a question" button
+  if (autofocus === "true" && inputRef.current) {
+    inputRef.current.focus()
+  }
 }, [searchParams])
 
 useEffect(() => {

@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { collections } from "@/data/collections"
 import { Button } from "@/components/ui/button"
-import { BookOpen, MessageCircleQuestionIcon } from 'lucide-react'
+import { BookOpen, MessageSquareText } from 'lucide-react'
 import Sidebar from "@/components/navigation/sidebar"
 import MobileNavigation from "@/components/navigation/mobile-navigation"
 import { useMobile } from "@/hooks/use-mobile"
@@ -16,14 +16,11 @@ export default function CollectionsPage() {
 
   const handleAsk = (collectionId: string) => {
     // Deep link to home with collection preselected and focus prompt
-    router.push(`/?collection=${collectionId}`)
+    router.push(`/?collection=${collectionId}&autofocus=true`)
   }
 
   const Card = ({ id, name, description, coverImage, count }: any) => (
-    <div 
-      className="bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2a2a2a] rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-[#3a3a3a] transition-all cursor-pointer"
-      onClick={() => router.push(`/collections/${id}`)}
-    >
+    <div className="bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2a2a2a] rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-[#3a3a3a] transition-all">
       <div className="relative h-36 w-full">
         <Image
           src={coverImage || "/placeholder.svg?height=200&width=360&query=abstract%20metal%20texture%20gradient"}
@@ -42,14 +39,14 @@ export default function CollectionsPage() {
 
         <div className="mt-4 flex gap-2">
           <Link href={`/collections/${id}`} className="flex-1">
-            <Button variant="outline" className="w-full border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#2a2a2a] text-gray-900 dark:text-white">
+            <Button variant="outline" className="w-full border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#2a2a2a] text-gray-900 dark:text-white cursor-pointer">
               <BookOpen className="w-4 h-4 mr-2" />
               {"Open"}
             </Button>
           </Link>
-          <Button className="flex-1 bg-blue-600 hover:bg-blue-700" onClick={() => handleAsk(id)}>
-            <MessageCircleQuestionIcon className="w-4 h-4 mr-2" />
-            Ask a question     
+          <Button className="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer" onClick={() => handleAsk(id)}>
+            <MessageSquareText className="w-4 h-4 mr-2" />
+            Chat
           </Button>
         </div>
       </div>
@@ -58,7 +55,7 @@ export default function CollectionsPage() {
 
   const content = (
     <div className="flex-1 p-6 overflow-auto">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-8xl mx-auto">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Data Collections</h1>
@@ -68,7 +65,7 @@ export default function CollectionsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {collections.map((col) => (
             <Card
               key={col.id}
