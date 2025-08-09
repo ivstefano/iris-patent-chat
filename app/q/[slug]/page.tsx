@@ -22,8 +22,6 @@ export default function ChatPage() {
     getConversation,
     addMessage,
     updateMessage,
-    startEditingMessage,
-    stopEditingMessage,
     setCurrentConversation,
   } = useConversationStore()
 
@@ -145,9 +143,6 @@ export default function ChatPage() {
     }
   }
 
-  const handleEditMessage = (messageId: string, newContent: string) => {
-    updateMessage(conversationId, messageId, { content: newContent })
-  }
 
 
   const chatContent = (
@@ -184,9 +179,6 @@ export default function ChatPage() {
             <MessageBubble
               key={message.id}
               message={message}
-              onEdit={handleEditMessage}
-              onStartEdit={(messageId) => startEditingMessage(conversationId, messageId)}
-              onCancelEdit={(messageId) => stopEditingMessage(conversationId, messageId)}
             />
           ))}
         </div>
