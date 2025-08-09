@@ -41,6 +41,7 @@ export function MessageBubble({message, onOpenPDF}: MessageBubbleProps) {
 
   const isQuestion = message.type === 'question'
   const isAnswer = message.type === 'answer'
+  const isLoading = message.isLoading === true
 
   // Helper function to get similarity badge color
   const getSimilarityBadgeColor = (similarity: number) => {
@@ -88,11 +89,22 @@ export function MessageBubble({message, onOpenPDF}: MessageBubbleProps) {
           }`}
         >
           <div className="whitespace-pre-wrap break-words">
-            {message.content}
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                </div>
+                <span className="text-gray-500 dark:text-gray-400 text-sm">{message.content || 'Thinking...'}</span>
+              </div>
+            ) : (
+              message.content
+            )}
           </div>
           
-          {/* Sources Section - Only for answers with sources */}
-          {isAnswer && sortedSources.length > 0 && (
+          {/* Sources Section - Only for answers with sources and not loading */}
+          {isAnswer && !isLoading && sortedSources.length > 0 && (
             <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
               <div className="text-xs text-gray-600 dark:text-gray-400 mb-2 font-medium">
                 Sources ({sortedSources.length} references)
@@ -170,18 +182,6 @@ export function MessageBubble({message, onOpenPDF}: MessageBubbleProps) {
         </div>
 
       </div>
-      
-      {/* PDF Viewer */}
-      {selectedPDF && (
-        <PDFViewer
-          isOpen={true}
-          onClose={() => setSelectedPDF(null)}
-          pdfUrl={selectedPDF.url}
-          documentTitle={selectedPDF.title}
-          initialPage={selectedPDF.page}
-          searchText={selectedPDF.searchText}
-        />
-      )}
     </div>
   )
 }

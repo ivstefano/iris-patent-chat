@@ -39,15 +39,12 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, documentTitle, initialPage,
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-black bg-opacity-50">
-      <div className="flex-1" onClick={onClose} />
-      
-      <div className="w-1/2 bg-white dark:bg-gray-900 shadow-xl flex flex-col">
+    <div className="w-1/2 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 truncate">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
-              {documentTitle}
+              {documentTitle.slice(0, 75) + (documentTitle.length > 75 ? '...' : '')}
             </h3>
             <div className="text-sm text-gray-500 dark:text-gray-400">
               {initialPage && <span>Page {initialPage}</span>}
@@ -117,7 +114,6 @@ export function PDFViewer({ isOpen, onClose, pdfUrl, documentTitle, initialPage,
             </div>
           </object>
         </div>
-      </div>
     </div>
   )
 }

@@ -20,6 +20,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { selectedPDF, openPDF, closePDF, isOpen: isPDFOpen } = usePDFViewer()
   const [isLoading, setIsLoading] = useState(false)
+  const initialResponseStarted = useRef(false)
 
   const {
     getConversation,
@@ -34,14 +35,21 @@ export default function ChatPage() {
   useEffect(() => {
     if (conversationId) {
       setCurrentConversation(conversationId)
+      // Reset the initial response flag for new conversations
+      initialResponseStarted.current = false
     }
   }, [conversationId, setCurrentConversation])
 
   // Auto-generate first response for new conversations
   useEffect(() => {
     if (conversation && conversation.messages.length === 1 && conversation.messages[0].type === 'question') {
-      const firstQuestion = conversation.messages[0].content
-      handleSendMessage(firstQuestion, true) // true indicates it's the initial response
+      // Check if we're already processing this conversation to avoid duplicates
+      const hasAnswerMessage = conversation.messages.some(msg => msg.type === 'answer')
+      if (!hasAnswerMessage && !initialResponseStarted.current) {
+        initialResponseStarted.current = true
+        const firstQuestion = conversation.messages[0].content
+        handleSendMessage(firstQuestion, true) // true indicates it's the initial response
+      }
     }
   }, [conversation])
 
@@ -83,12 +91,18 @@ export default function ChatPage() {
       })
     }
 
-    // Add loading message for AI response
-    addMessage(conversationId, {
-      type: 'answer',
-      content: '',
-      isLoading: true,
-    })
+    // Check if there's already a loading message to avoid duplicates
+    const currentMessages = getConversation(conversationId)?.messages || []
+    const hasLoadingMessage = currentMessages.some(msg => msg.isLoading && msg.type === 'answer')
+    
+    // Add AI response message that starts in loading state only if one doesn't exist
+    if (!hasLoadingMessage) {
+      addMessage(conversationId, {
+        type: 'answer',
+        content: 'Thinking...',
+        isLoading: true,
+      })
+    }
 
     try {
       // Call search API with conversation context
@@ -112,8 +126,7 @@ export default function ChatPage() {
 
       // Update loading message with actual response
       const messages = getConversation(conversationId)?.messages || []
-      console.log(messages)
-      const loadingMessage = messages[messages.length - 1]
+      const loadingMessage = messages.find(msg => msg.isLoading && msg.type === 'answer')
       
       if (loadingMessage) {
         updateMessage(conversationId, loadingMessage.id, {
@@ -136,7 +149,7 @@ export default function ChatPage() {
       
       // Update loading message with error
       const messages = getConversation(conversationId)?.messages || []
-      const loadingMessage = messages[messages.length - 1]
+      const loadingMessage = messages.find(msg => msg.isLoading && msg.type === 'answer')
       
       if (loadingMessage) {
         updateMessage(conversationId, loadingMessage.id, {
@@ -181,15 +194,13 @@ export default function ChatPage() {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="group">
-          {conversation.messages
-            .filter((message) => !message.isLoading)
-            .map((message) => (
-              <MessageBubble
-                key={message.id}
-                message={message}
-                onOpenPDF={openPDF}
-              />
-            ))}
+          {conversation.messages.map((message) => (
+            <MessageBubble
+              key={message.id}
+              message={message}
+              onOpenPDF={openPDF}
+            />
+          ))}
         </div>
         <div ref={messagesEndRef} />
       </div>
