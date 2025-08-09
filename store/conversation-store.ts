@@ -8,6 +8,8 @@ export interface DocumentReference {
   similarity: number // 0-100%
   collection?: string
   url?: string
+  content?: string // Preview of the chunk content
+  page?: number // Page number in the document
 }
 
 export interface ConversationMessage {

@@ -123,3 +123,38 @@ next-env.d.ts
 # Temporary files
 tmp/
 temp/
+
+# Python Backend
+backend/venv/
+backend/env/
+backend/.env
+backend/__pycache__/
+backend/*.py[cod]
+backend/*$py.class
+backend/*.so
+backend/data/processed/
+backend/data/raw/
+backend/*.log
+backend/server.log
+backend/server_full.log
+backend/nohup.out
+backend/.coverage
+backend/.pytest_cache/
+
+# ChromaDB - Allow embeddings directory but exclude temp files
+backend/chroma/
+# Note: backend/data/embeddings/ is now included for sharing pre-processed embeddings
+
+# Model files (but allow ChromaDB binaries)
+*.pkl
+*.pth
+*.h5
+*.onnx
+
+# Allow ChromaDB embedding files
+!backend/data/embeddings/**/*.bin
+!backend/data/embeddings/*.sqlite3
+
+# Jupyter notebooks
+.ipynb_checkpoints
+*.ipynb

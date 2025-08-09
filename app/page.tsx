@@ -124,6 +124,31 @@ const content = (
         <p className="text-xl text-gray-600 dark:text-gray-400">We can answer any science questions based on the selected dataset.</p>
       </div>
 
+      {/* Example Questions */}
+      <div className="mb-6">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Try asking:</p>
+        <div className="flex flex-wrap gap-2">
+          {[
+            "What is the highest temperature used during the cooling in all of these patents?",
+            "What is the chromium content in the steel?",
+            "How does silicon affect the electrical properties?",
+            "What are the magnetic properties requirements?",
+            "Describe the annealing process for steel"
+          ].map((example, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setQuery(example);
+                handleSuggestionClick(example);
+              }}
+              className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
+            >
+              {example}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="relative">
         <SearchInput
           query={query}

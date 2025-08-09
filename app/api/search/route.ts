@@ -8,6 +8,7 @@ interface SearchResult {
   source: "DOCUMENT"
   filename?: string
   collection?: string
+  similarity?: number
 }
 
 interface SummaryResponse {
@@ -24,6 +25,48 @@ function toBackendSources(source: SourceInput): Array<"DOCUMENT"> {
     case "all":
     default:
       return ["DOCUMENT"] // Default to documents since that's what we have
+  }
+}
+
+async function callRAGBackend(query: string): Promise<SummaryResponse | null> {
+  try {
+    const response = await fetch("http://localhost:8000/api/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: query,
+        threshold: 0.3,  // Show all results above 30% similarity
+        max_results: 15   // Get more results
+      })
+    })
+
+    if (!response.ok) {
+      console.error("RAG backend error:", response.status)
+      return null
+    }
+
+    const ragData = await response.json()
+    
+    // Convert RAG response to frontend format
+    const searchResults: SearchResult[] = ragData.sources.map((source: any) => ({
+      title: `${source.metadata.document} - Page ${source.metadata.page}`,
+      url: `/pdfs/${source.metadata.document}`,
+      content: source.content,
+      source: "DOCUMENT" as const,
+      filename: source.metadata.document,
+      collection: "Patents",
+      similarity: source.similarity
+    }))
+
+    return {
+      summary: ragData.answer,
+      searchResults
+    }
+  } catch (error) {
+    console.error("Error calling RAG backend:", error)
+    return null
   }
 }
 
@@ -102,6 +145,16 @@ export async function POST(request: Request) {
     }
 
     const backendSources = toBackendSources(source as SourceInput)
+    
+    // Try to call our new RAG backend first
+    const ragResponse = await callRAGBackend(query)
+    if (ragResponse) {
+      return NextResponse.json(ragResponse, {
+        status: 200,
+        headers: { "cache-control": "no-store" },
+      })
+    }
+
     const base = process.env.IRIS_BACKEND_URL
 
     // If no backend configured, return a mock so the UI works in preview/dev.

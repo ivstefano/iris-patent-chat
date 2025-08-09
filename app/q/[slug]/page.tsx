@@ -120,9 +120,11 @@ export default function ChatPage() {
             id: `source-${index}`,
             title: result.title,
             filename: result.filename || result.url?.split('/').pop() || `document-${index}`,
-            similarity: Math.floor(Math.random() * 35) + 60, // Mock similarity 60-95%
+            similarity: result.similarity || 0, // Use actual similarity from API
             collection: result.collection || conversation.collection || 'General',
             url: result.url,
+            content: result.content, // Include content for preview
+            page: result.page || result.metadata?.page, // Include page number
           })) || [],
         })
       }

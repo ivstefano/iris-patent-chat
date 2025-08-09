@@ -32,15 +32,17 @@ export function SourcesPanel({ sources, onSourceClick, className }: SourcesPanel
   }
 
   const getSimilarityColor = (similarity: number) => {
-    if (similarity >= 85) return 'text-green-600 dark:text-green-400'
-    if (similarity >= 70) return 'text-yellow-600 dark:text-yellow-400'
-    return 'text-red-600 dark:text-red-400'
+    if (similarity >= 70) return 'text-green-600 dark:text-green-400'
+    if (similarity >= 50) return 'text-blue-600 dark:text-blue-400'
+    if (similarity >= 30) return 'text-yellow-600 dark:text-yellow-400'
+    return 'text-gray-600 dark:text-gray-400'
   }
 
   const getSimilarityBadgeColor = (similarity: number) => {
-    if (similarity >= 85) return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
-    if (similarity >= 70) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200'
-    return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+    if (similarity >= 70) return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800'
+    if (similarity >= 50) return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800'
+    if (similarity >= 30) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800'
+    return 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800'
   }
 
   // Group sources by collection
