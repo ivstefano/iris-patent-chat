@@ -69,7 +69,7 @@ class RAGEngine:
                 {
                     "chunk_id": chunk.chunk_id,
                     "content": chunk.content[:500] + "..." if len(chunk.content) > 500 else chunk.content,
-                    "similarity": round(chunk.similarity * 100, 1),  # Convert to percentage
+                    "similarity": int(round(chunk.similarity * 100)),  # Convert to percentage (whole number)
                     "metadata": {
                         "document": chunk.metadata.get('source_document', ''),
                         "page": chunk.metadata.get('page_number', 1),
@@ -107,13 +107,13 @@ class RAGEngine:
             metadata = chunk.metadata
             
             context_part = f"""
-CHUNK {i} (Similarity: {similarity_pct}%)
+EXCERPT {i} (Relevance: {similarity_pct}%)
 Document: {metadata.get('source_document', 'Unknown')}
 Page: {metadata.get('page_number', 'Unknown')}
 Section: {metadata.get('section_title', 'N/A')}
 
 Content:
-{chunk.content}
+"{chunk.content}"
 
 ---
 """
@@ -139,9 +139,11 @@ INSTRUCTIONS:
 4. If the context contains specific numbers, temperatures, or measurements, include them exactly as stated
 5. If you cannot answer based on the provided context, clearly state this
 6. Maintain scientific accuracy and use proper technical terminology
-7. Reference specific chunks when making claims (e.g., "According to the document on page X...")
+7. When referencing information, quote the exact text from the excerpts and cite the document
+8. Use natural language - avoid mentioning "chunks" or "excerpts" in your response
+9. Present quoted text clearly using quotation marks for exact passages
 
-IMPORTANT: Your answer will be displayed alongside the source chunks, so users can verify the information. Prioritize accuracy and traceability over completeness."""
+IMPORTANT: Your answer will be displayed alongside the source excerpts, so users can verify the information. Prioritize accuracy and traceability over completeness."""
     
     def test_connection(self) -> bool:
         """

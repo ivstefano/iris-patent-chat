@@ -9,6 +9,7 @@ interface SearchResult {
   filename?: string
   collection?: string
   similarity?: number
+  page?: number
 }
 
 interface SummaryResponse {
@@ -26,6 +27,16 @@ function toBackendSources(source: SourceInput): Array<"DOCUMENT"> {
     default:
       return ["DOCUMENT"] // Default to documents since that's what we have
   }
+}
+
+function getDocumentTitle(filename: string): string {
+  for (const collection of collections) {
+    const doc = collection.documents.find(d => d.filename === filename)
+    if (doc) {
+      return doc.title
+    }
+  }
+  return filename.replace('.pdf', '') // Fallback to filename without extension
 }
 
 async function callRAGBackend(query: string): Promise<SummaryResponse | null> {
@@ -50,15 +61,19 @@ async function callRAGBackend(query: string): Promise<SummaryResponse | null> {
     const ragData = await response.json()
     
     // Convert RAG response to frontend format
-    const searchResults: SearchResult[] = ragData.sources.map((source: any) => ({
-      title: `${source.metadata.document} - Page ${source.metadata.page}`,
-      url: `/pdfs/${source.metadata.document}`,
-      content: source.content,
-      source: "DOCUMENT" as const,
-      filename: source.metadata.document,
-      collection: "Patents",
-      similarity: source.similarity
-    }))
+    const searchResults: SearchResult[] = ragData.sources.map((source: any) => {
+      const documentTitle = getDocumentTitle(source.metadata.document)
+      return {
+        title: documentTitle,
+        url: `/pdfs/${source.metadata.document}`,
+        content: source.content,
+        source: "DOCUMENT" as const,
+        filename: source.metadata.document,
+        collection: "Patents",
+        similarity: source.similarity,
+        page: source.metadata.page
+      }
+    })
 
     return {
       summary: ragData.answer,

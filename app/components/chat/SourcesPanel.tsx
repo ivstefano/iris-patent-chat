@@ -39,10 +39,10 @@ export function SourcesPanel({ sources, onSourceClick, className }: SourcesPanel
   }
 
   const getSimilarityBadgeColor = (similarity: number) => {
-    if (similarity >= 70) return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800'
-    if (similarity >= 50) return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800'
-    if (similarity >= 30) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800'
-    return 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800'
+    if (similarity >= 70) return 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700'
+    if (similarity >= 50) return 'bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 border border-blue-300 dark:border-blue-700'
+    if (similarity >= 30) return 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 border border-yellow-300 dark:border-yellow-700'
+    return 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600'
   }
 
   // Group sources by collection
@@ -151,7 +151,7 @@ export function SourcesPanel({ sources, onSourceClick, className }: SourcesPanel
                                 {source.filename}
                               </span>
                               <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${getSimilarityBadgeColor(source.similarity)}`}>
-                                {source.similarity}%
+                                {Math.round(source.similarity)}%
                               </span>
                             </div>
                           </div>

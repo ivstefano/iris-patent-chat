@@ -1,8 +1,9 @@
 "use client"
 
-import React from "react"
-import {User, Bot, FileText, ExternalLink} from "lucide-react"
+import React, { useState } from "react"
+import {User, Bot, FileText, ExternalLink, ChevronDown, ChevronUp} from "lucide-react"
 import {ConversationMessage} from "@/store/conversation-store"
+import { PDFViewer } from "../pdf/PDFViewer"
 
 interface MessageBubbleProps {
   message: ConversationMessage
@@ -23,14 +24,18 @@ export function MessageBubble({message}: MessageBubbleProps) {
 
   // Helper function to get similarity badge color
   const getSimilarityBadgeColor = (similarity: number) => {
-    if (similarity >= 70) return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800'
-    if (similarity >= 50) return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
-    if (similarity >= 30) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800'
-    return 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800'
+    if (similarity >= 70) return 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700'
+    if (similarity >= 50) return 'bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700'
+    if (similarity >= 30) return 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700'
+    return 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600'
   }
+
+  const [showAllSources, setShowAllSources] = useState(false)
+  const [selectedPDF, setSelectedPDF] = useState<{url: string, title: string, page?: number, searchText?: string} | null>(null)
 
   // Sort sources by similarity (highest first)
   const sortedSources = message.sources ? [...message.sources].sort((a, b) => b.similarity - a.similarity) : []
+  const visibleSources = showAllSources ? sortedSources : sortedSources.slice(0, 5)
 
   return (
     <div className={`flex w-full mb-4 group ${isQuestion ? 'justify-end' : 'justify-start'}`}>
@@ -74,40 +79,71 @@ export function MessageBubble({message}: MessageBubbleProps) {
                 Sources ({sortedSources.length} references)
               </div>
               <div className="space-y-2">
-                {sortedSources.slice(0, 5).map((source, index) => (
+                {visibleSources.map((source, index) => (
                   <div key={source.id || index} className="flex items-start gap-2">
                     {/* Similarity Badge */}
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${getSimilarityBadgeColor(source.similarity)}`}>
-                      {source.similarity}%
+                      {Math.round(source.similarity)}%
                     </span>
                     
                     {/* Source Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1">
-                        <FileText className="h-3 w-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                        <span className="text-xs text-gray-700 dark:text-gray-300 truncate">
-                          {source.filename || source.title} - Page {source.page || 'N/A'}
-                        </span>
-                        {source.url && (
-                          <button
-                            onClick={() => window.open(source.url, '_blank')}
-                            className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                          </button>
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
-                        {source.content?.substring(0, 150)}...
-                      </p>
+                      {source.url ? (
+                        <button
+                          onClick={() => setSelectedPDF({
+                            url: source.url!,
+                            title: source.title,
+                            page: source.page,
+                            searchText: source.content
+                          })}
+                          className="w-full text-left hover:bg-gray-50 dark:hover:bg-gray-800 rounded p-1 -m-1 transition-colors group"
+                          title="Click to view PDF"
+                        >
+                          <div className="flex items-center gap-1">
+                            <FileText className="h-3 w-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                            <span className="text-xs text-gray-700 dark:text-gray-300 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                              {source.title} - Page {source.page || 'N/A'}
+                            </span>
+                            <ExternalLink className="h-3 w-3 text-gray-400 dark:text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 ml-auto flex-shrink-0" />
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2 group-hover:text-gray-600 dark:group-hover:text-gray-300">
+                            {source.content?.substring(0, 150)}...
+                          </p>
+                        </button>
+                      ) : (
+                        <div>
+                          <div className="flex items-center gap-1">
+                            <FileText className="h-3 w-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                            <span className="text-xs text-gray-700 dark:text-gray-300 truncate">
+                              {source.title} - Page {source.page || 'N/A'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
+                            {source.content?.substring(0, 150)}...
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
                 
                 {sortedSources.length > 5 && (
-                  <div className="text-xs text-gray-500 dark:text-gray-400 italic">
-                    +{sortedSources.length - 5} more sources
-                  </div>
+                  <button
+                    onClick={() => setShowAllSources(!showAllSources)}
+                    className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+                  >
+                    {showAllSources ? (
+                      <>
+                        <ChevronUp className="h-3 w-3" />
+                        Show fewer sources
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-3 w-3" />
+                        +{sortedSources.length - 5} more sources
+                      </>
+                    )}
+                  </button>
                 )}
               </div>
             </div>
@@ -115,6 +151,18 @@ export function MessageBubble({message}: MessageBubbleProps) {
         </div>
 
       </div>
+      
+      {/* PDF Viewer */}
+      {selectedPDF && (
+        <PDFViewer
+          isOpen={true}
+          onClose={() => setSelectedPDF(null)}
+          pdfUrl={selectedPDF.url}
+          documentTitle={selectedPDF.title}
+          initialPage={selectedPDF.page}
+          searchText={selectedPDF.searchText}
+        />
+      )}
     </div>
   )
 }
