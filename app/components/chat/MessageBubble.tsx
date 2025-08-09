@@ -113,11 +113,6 @@ export function MessageBubble({message, onOpenPDF}: MessageBubbleProps) {
           <div className="whitespace-pre-wrap break-words">
             {isLoading ? (
               <div className="flex items-center gap-2">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse"></div>
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-                </div>
                 <span className="text-gray-500 dark:text-gray-400 text-sm">
                   {message.content || 'Thinking...'}
                 </span>

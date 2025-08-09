@@ -164,50 +164,6 @@ export default function SearchInput({
           {/* Toolbar */}
           <div className="flex items-center gap-2 px-4 pb-3 bg-gray-50 dark:bg-[#252525]">
             {/* Collection Dropdown */}
-            <DropdownMenu open={collectionDropdownOpen} onOpenChange={setCollectionDropdownOpen}>
-              <DropdownMenuTrigger asChild>
-                <PillButton
-                  className="h-9 flex items-center gap-1"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowSuggestions?.(false);
-                  }}
-                >
-                  <Folder size={14} className="text-gray-300" />
-                  <span className="text-xs">{currentCollection ? currentCollection.name : "All Collections"}</span>
-                  <ChevronDown size={14} className={`transition-transform ${collectionDropdownOpen ? "rotate-180" : ""}`} />
-                </PillButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="!bg-white dark:!bg-[#2a2a2a] !border-gray-200 dark:!border-[#3a3a3a] !text-gray-900 dark:!text-white z-50 min-w-[200px]">
-                <DropdownMenuItem
-                  className="cursor-pointer !text-gray-900 dark:!text-white hover:!bg-gray-100 dark:hover:!bg-[#3a3a3a] focus:!bg-gray-100 dark:focus:!bg-[#3a3a3a] hover:!text-gray-900 dark:hover:!text-white focus:!text-gray-900 dark:focus:!text-white"
-                  onClick={() => setSelectedCollection?.(undefined)}
-                >
-                  <div className="flex items-center gap-3 flex-1">
-                    <FoldersIcon size={14} className="text-gray-500 dark:text-gray-300" />
-                    <div className="flex-1 text-sm">All Collections</div>
-                  </div>
-                  {!currentCollection && <Check size={14} className="text-blue-500 dark:text-blue-400" />}
-                </DropdownMenuItem>
-                {collections.map((c) => (
-                  <DropdownMenuItem
-                    key={c.id}
-                    className="cursor-pointer !text-gray-900 dark:!text-white hover:!bg-gray-100 dark:hover:!bg-[#3a3a3a] focus:!bg-gray-100 dark:focus:!bg-[#3a3a3a] hover:!text-gray-900 dark:hover:!text-white focus:!text-gray-900 dark:focus:!text-white"
-                    onClick={() => setSelectedCollection?.(c.id)}
-                  >
-                    <div className="flex items-center gap-3 flex-1">
-                      <Folder size={14} className="text-gray-500 dark:text-gray-300" />
-                      <div className="flex-1">
-                        <div className="text-sm font-medium">{c.name}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{c.documents.length} files</div>
-                      </div>
-                    </div>
-                    {currentCollection?.id === c.id && <Check size={14} className="text-blue-500 dark:text-blue-400" />}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
       </div>
