@@ -31,13 +31,6 @@ export function SourcesPanel({ sources, onSourceClick, className }: SourcesPanel
     )
   }
 
-  const getSimilarityColor = (similarity: number) => {
-    if (similarity >= 70) return 'text-green-600 dark:text-green-400'
-    if (similarity >= 50) return 'text-blue-600 dark:text-blue-400'
-    if (similarity >= 30) return 'text-yellow-600 dark:text-yellow-400'
-    return 'text-gray-600 dark:text-gray-400'
-  }
-
   const getSimilarityBadgeColor = (similarity: number) => {
     if (similarity >= 70) return 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700'
     if (similarity >= 50) return 'bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 border border-blue-300 dark:border-blue-700'
@@ -87,7 +80,7 @@ export function SourcesPanel({ sources, onSourceClick, className }: SourcesPanel
           {Object.entries(groupedSources)
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([collection, collectionSources]) => {
-              const isCollectionExpanded = expandedSections[collection] !== false
+              const isCollectionExpanded = expandedSections[collection]
               
               return (
                 <div key={collection} className="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
