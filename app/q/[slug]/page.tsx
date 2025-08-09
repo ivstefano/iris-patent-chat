@@ -10,7 +10,6 @@ import { MessageBubble } from "@/app/components/chat/MessageBubble"
 import { ChatInput } from "@/app/components/chat/ChatInput"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft} from "lucide-react"
-import { DocumentReference } from "@/store/conversation-store"
 
 export default function ChatPage() {
   const { slug } = useParams<{ slug: string }>()
