@@ -5,7 +5,7 @@ interface SearchResult {
   title: string
   url: string
   content: string
-  source: "JIRA" | "CONFLUENCE" | "DOCUMENT"
+  source: "DOCUMENT"
   filename?: string
   collection?: string
 }
@@ -15,14 +15,10 @@ interface SummaryResponse {
   searchResults: SearchResult[]
 }
 
-type SourceInput = "all" | "jira" | "confluence" | "documents"
+type SourceInput = "all" | "documents"
 
-function toBackendSources(source: SourceInput): Array<"JIRA" | "CONFLUENCE" | "DOCUMENT"> {
+function toBackendSources(source: SourceInput): Array<"DOCUMENT"> {
   switch (source) {
-    case "jira":
-      return ["JIRA"]
-    case "confluence":
-      return ["CONFLUENCE"]
     case "documents":
       return ["DOCUMENT"]
     case "all":
@@ -31,7 +27,7 @@ function toBackendSources(source: SourceInput): Array<"JIRA" | "CONFLUENCE" | "D
   }
 }
 
-function buildMockResponse(question: string, sources: Array<"JIRA" | "CONFLUENCE" | "DOCUMENT">, collection?: string): SummaryResponse {
+function buildMockResponse(question: string, sources: Array<"ALL" | "DOCUMENT">, collection?: string): SummaryResponse {
   const s = question?.trim() || "your query"
   
   // Generate AI-like response about steel/metal patents

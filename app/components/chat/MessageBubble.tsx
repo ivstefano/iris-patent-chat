@@ -1,14 +1,14 @@
 "use client"
 
 import React from "react"
-import { User, Bot } from "lucide-react"
-import { DocumentReference, ConversationMessage } from "@/store/conversation-store"
+import {User, Bot} from "lucide-react"
+import {ConversationMessage} from "@/store/conversation-store"
 
 interface MessageBubbleProps {
   message: ConversationMessage
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+export function MessageBubble({message}: MessageBubbleProps) {
 
   const formatTime = (timestamp: Date) => {
     return new Intl.DateTimeFormat('en-US', {
@@ -28,7 +28,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         <div className={`flex items-center gap-2 mb-1 ${isQuestion ? 'justify-end' : 'justify-start'}`}>
           {isAnswer && (
             <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-              <Bot size={14} className="text-white" />
+              <Bot size={14} className="text-white"/>
             </div>
           )}
           <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -39,7 +39,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           </span>
           {isQuestion && (
             <div className="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
-              <User size={14} className="text-white" />
+              <User size={14} className="text-white"/>
             </div>
           )}
         </div>
@@ -52,20 +52,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white mr-8'
           }`}
         >
-          {message.isLoading ? (
-            <div className="flex items-center gap-2">
-              <div className="flex gap-1">
-                <div className="w-2 h-2 bg-current opacity-60 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                <div className="w-2 h-2 bg-current opacity-60 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                <div className="w-2 h-2 bg-current opacity-60 rounded-full animate-bounce"></div>
-              </div>
-              <span className="text-sm opacity-60">Thinking...</span>
-            </div>
-          ) : (
-            <div className="whitespace-pre-wrap break-words">
-              {message.content}
-            </div>
-          )}
+          <div className="whitespace-pre-wrap break-words">
+            {message.content}
+          </div>
         </div>
 
       </div>

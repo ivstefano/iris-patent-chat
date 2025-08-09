@@ -109,6 +109,7 @@ export default function ChatPage() {
 
       // Update loading message with actual response
       const messages = getConversation(conversationId)?.messages || []
+      console.log(messages)
       const loadingMessage = messages[messages.length - 1]
       
       if (loadingMessage) {
@@ -175,12 +176,14 @@ export default function ChatPage() {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="group">
-          {conversation.messages.map((message) => (
-            <MessageBubble
-              key={message.id}
-              message={message}
-            />
-          ))}
+          {conversation.messages
+            .filter((message) => !message.isLoading)
+            .map((message) => (
+              <MessageBubble
+                key={message.id}
+                message={message}
+              />
+            ))}
         </div>
         <div ref={messagesEndRef} />
       </div>
