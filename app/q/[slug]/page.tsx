@@ -20,6 +20,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { selectedPDF, openPDF, closePDF, isOpen: isPDFOpen } = usePDFViewer()
   const [isLoading, setIsLoading] = useState(false)
+  const [isClient, setIsClient] = useState(false)
   const initialResponseStarted = useRef(false)
 
   const {
@@ -31,6 +32,10 @@ export default function ChatPage() {
 
   const conversationId = slug
   const conversation = getConversation(conversationId)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
     if (conversationId) {
@@ -213,6 +218,17 @@ export default function ChatPage() {
       />
     </div>
   )
+
+  // Prevent hydration mismatch by not rendering until client-side
+  if (!isClient) {
+    return (
+      <main className="flex h-screen bg-white dark:bg-[#121212] text-gray-900 dark:text-white">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-gray-500">Loading...</div>
+        </div>
+      </main>
+    )
+  }
 
   if (isMobile) {
     return (
